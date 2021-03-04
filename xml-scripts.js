@@ -1,12 +1,7 @@
 $(document).ready(function() {
 
-    // to hide the courses-loader on courses page launch.
-    $('#courses-loader').hide();
-
-    // Loading quotes
-    let quotesURL = 'https://smileschool-api.hbtn.info/xml/quotes';
     $.ajax({
-        url: quotesURL,
+        url: 'https://smileschool-api.hbtn.info/xml/quotes',
         type: 'GET',
         dataType: 'xml',
         data: {
@@ -41,10 +36,8 @@ $(document).ready(function() {
         }
     });
 
-    // Popular Tutorials
-    let tutorialsURL = 'https://smileschool-api.hbtn.info/xml/popular-tutorials';
     $.ajax({
-        url: tutorialsURL,
+        url: 'https://smileschool-api.hbtn.info/xml/popular-tutorials',
         type: 'GET',
         dataType: 'xml',
         data: {
@@ -107,10 +100,8 @@ $(document).ready(function() {
         }
     });
 
-    // Latest videos
-    let latestVideosURL = 'https://smileschool-api.hbtn.info/xml/latest-videos';
     $.ajax({
-        url: latestVideosURL,
+        url: 'https://smileschool-api.hbtn.info/xml/latest-videos',
         type: 'GET',
         dataType: 'xml',
         data: {
@@ -174,25 +165,22 @@ $(document).ready(function() {
         }
     });
 
-    // Courses page filtering
-    let coursesURL = 'https://smileschool-api.hbtn.info/xml/courses';
-    let $qVal = $('.user_search').val();
-    let $topicVal = 'all';
-    let $sortVal = 'most_popular';
+    let $search_val = $('.user_search').val();
+    let $all_search = 'all';
+    let $sort_val = 'most_popular';
 
-    // Generate appropriate Topic and sorting filters according to the courses API
     function coursesHTML() {
         $.ajax({
-            url: coursesURL,
+            url: 'https://smileschool-api.hbtn.info/xml/courses',
             type: 'GET',
             dataType: 'xml',
             data: {
                 action: 'query',
                 list: 'search',
                 format: 'xml',
-                q: $qVal,
-                topic: $topicVal,
-                sort: $sortVal,
+                q: $search_val,
+                topic: $all_search,
+                sort: $sort_val,
             },
             success: function(xml) {
                 // $.each($(xml).find('video'), function(i, el) {
@@ -200,9 +188,9 @@ $(document).ready(function() {
                     let topicName = $(this).text()[0].toUpperCase() + $(this).text().substring(1);
                     let $btn = $(`<button data-value=${$(this).text()} class="dropdown-item" type="button">${topicName}</button>`);
                     $btn.click(function(e) {
-                        $topicVal = e.target.getAttribute('data-value');
+                        $all_search = e.target.getAttribute('data-value');
                         $('#topic-menu-container').text(e.target.textContent);
-                        getCourses($qVal, $topicVal, $sortVal);
+                        getCourses($search_val, $all_search, $sort_val);
                     });
                     $('#topic-menu').append($btn);
                 });
@@ -212,9 +200,9 @@ $(document).ready(function() {
                     let sortName = $(this).text()[0].toUpperCase() + $(this).text().substr(1,3) + ' ' + $(this).text().substr(5, 1).toUpperCase() + $(this).text().substr(6);
                     let $btn = $(`<button data-value=${$(this).text()} class="dropdown-item" type="button">${sortName}</button>`);
                     $btn.click(function(e) {
-                        $sortVal = e.target.getAttribute('data-value');
+                        $sort_val = e.target.getAttribute('data-value');
                         $('#sorting-menu-container').text(e.target.textContent);
-                        getCourses($qVal, $topicVal, $sortVal);
+                        getCourses($search_val, $all_search, $sort_val);
                     });
                     $('#sorting-menu').append($btn);
                 });
@@ -227,28 +215,25 @@ $(document).ready(function() {
 
     coursesHTML();
 
-    // Handle keywords search change
     $('#user_search').on('input', function(e) {
-        $qVal = e.target.value;
+        $search_val = e.target.value;
         setTimeout(function() {
-            getCourses($qVal, $topicVal, $sortVal);
+            getCourses($search_val, $all_search, $sort_val);
         }, 500);
     });
 
-    
-    // GET COURSES FUNCTION
-    function getCourses($qVal, $topicVal, $sortVal) {
+    function getCourses($search_val, $all_search, $sort_val) {
         $.ajax({
-            url: coursesURL,
+            url: 'https://smileschool-api.hbtn.info/xml/courses',
             type: 'GET',
             dataType: 'xml',
             data: {
                 action: 'query',
                 list: 'search',
                 format: 'xml',
-                q: $qVal,
-                topic: $topicVal,
-                sort: $sortVal,
+                q: $search_val,
+                topic: $all_search,
+                sort: $sort_val,
             },
             beforeSend: function() {
                 $('#courses-loader').show();
